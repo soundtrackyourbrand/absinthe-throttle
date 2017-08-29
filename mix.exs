@@ -5,9 +5,13 @@ defmodule AbsintheThrottle.Mixfile do
     [
       app: :absinthe_throttle,
       version: "0.1.0",
-      elixir: "~> 1.5",
+      elixir: "~> 1.4",
       start_permanent: Mix.env == :prod,
-      deps: deps()
+      deps: deps(),
+      description: description(),
+      package: package(),
+      name: "absinthe_throttle",
+      source_url: "https://github.com/soundtrackyourbrand/absinthe-throttle"
     ]
   end
 
@@ -23,6 +27,20 @@ defmodule AbsintheThrottle.Mixfile do
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:poolboy, "~> 1.5", optional: true},
       {:semaphore, "~> 1.0", optional: true},
+    ]
+  end
+
+  defp description do
+    "Pluggable resolve throttling for Absinthe GraphQL."
+  end
+
+  defp package do
+    [
+      name: "absinthe_throttle",
+      licenses: ["MIT"],
+      files: ["lib", "mix.exs", "README*", "LICENSE*"],
+      maintainers: ["Fredrik Wärnsberg"],
+      links: %{"GitHub" => "https://github.com/soundtrackyourbrand/absinthe-throttle"}
     ]
   end
 end
