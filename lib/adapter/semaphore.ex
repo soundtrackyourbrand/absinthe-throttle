@@ -1,4 +1,4 @@
-defmodule AbsintheThrottle.Pool.Semaphore do
+defmodule AbsintheThrottle.Adapter.Semaphore do
   def transaction(res, args \\ []) do
     name = Keyword.fetch!(args, :name)
     size = Keyword.fetch!(args, :size)

@@ -15,13 +15,13 @@ defmodule AbsintheThrottleTest do
   end
 
   defmodule Throttled do
-    use AbsintheThrottle, adapter: AbsintheThrottle.Pool.Semaphore, arguments: [name: :resolve,
+    use AbsintheThrottle, adapter: AbsintheThrottle.Adapter.Semaphore, arguments: [name: :resolve,
                                                                                 size: 0,
                                                                                 error: {:error, :custom_error}]
   end
 
   defmodule Unthrottled do
-    use AbsintheThrottle, adapter: AbsintheThrottle.Pool.Semaphore, arguments: [name: :resolve,
+    use AbsintheThrottle, adapter: AbsintheThrottle.Adapter.Semaphore, arguments: [name: :resolve,
                                                                                 size: 1,
                                                                                 error: {:error, :custom_error}]
   end

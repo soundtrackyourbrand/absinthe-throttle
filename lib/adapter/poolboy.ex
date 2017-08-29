@@ -1,4 +1,4 @@
-defmodule AbsintheThrottle.Pool.Poolboy do
+defmodule AbsintheThrottle.Adapter.Poolboy do
   require Logger
   def transaction(res, args \\ []) do
     pool = Keyword.fetch!(args, :pool)
