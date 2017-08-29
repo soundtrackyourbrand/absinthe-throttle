@@ -11,9 +11,9 @@ defmodule AbsintheThrottle do
 
       def call(%Resolution{state: :unresolved, parent_type: %{identifier: :query}} = res, _config) do
         arguments = case unquote(arguments) do
-                      [] -> []
-                      x -> [res] ++ [x]
-                    end
+          [] -> []
+          x -> [res] ++ [x]
+        end
         case apply(unquote(adapter), :transaction, arguments) do
           {:ok, res} -> res
           {:error, _} = error ->
@@ -21,6 +21,8 @@ defmodule AbsintheThrottle do
             %{res | middleware: []}
         end
       end
+
+      def call(res, _), do: res
     end
   end
 end
