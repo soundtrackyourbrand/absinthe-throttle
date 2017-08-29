@@ -1,5 +1,8 @@
 # AbsintheThrottle
 
+[![Build Status](https://travis-ci.org/soundtrackyourbrand/absinthe-throttle.svg?branch=master)](https://travis-ci.org/soundtrackyourbrand/absinthe-throttle)
+
+
 **TODO: Add description**
 
 ## Installation
