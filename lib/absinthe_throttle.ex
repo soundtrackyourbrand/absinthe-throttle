@@ -1,18 +1,26 @@
 defmodule AbsintheThrottle do
-  @moduledoc """
-  Documentation for AbsintheThrottle.
-  """
+  defmacro __using__(opts) do
+    alias Absinthe.Resolution
 
-  @doc """
-  Hello world.
+    adapter = Keyword.fetch!(opts, :adapter)
+    arguments = Keyword.get(opts, :arguments, nil)
 
-  ## Examples
+    quote do
+      def middleware([], field, object), do: []
+      def middleware(middleware, field, object), do: [__MODULE__ | middleware]
 
-      iex> AbsintheThrottle.hello
-      :world
-
-  """
-  def hello do
-    :world
+      def call(%Resolution{state: :unresolved, parent_type: %{identifier: :query}} = res, _config) do
+        arguments = case unquote(arguments) do
+                      [] -> []
+                      x -> [res] ++ [x]
+                    end
+        case apply(unquote(adapter), :transaction, arguments) do
+          {:ok, res} -> res
+          {:error, _} = error ->
+            res = Resolution.put_result(res, error)
+            %{res | middleware: []}
+        end
+      end
+    end
   end
 end
