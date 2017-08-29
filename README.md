@@ -18,7 +18,7 @@ end
 defmodule MyApp.Schema do
   use Absinthe.Schema
 
-  def middleware(middlewares, field, object), do: Unthrottled.middleware(middlewares, field, object)
+  def middleware(middlewares, field, object), do: MyApp.Throttler.middleware(middlewares, field, object)
 
   # ...
 end
