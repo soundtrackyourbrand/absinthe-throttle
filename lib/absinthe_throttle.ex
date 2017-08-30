@@ -18,7 +18,7 @@ defmodule AbsintheThrottle do
         def pipeline(config, opts) do
           config
           |> Absinthe.Plug.default_pipeline(opts)
-          |> Absinthe.Pipeline.insert_before(Absinthe.Phase.Document.Execution.Resolution, @parent)
+          |> Absinthe.Pipeline.insert_before(Absinthe.Phase.Document.Execution.Resolution, {@parent, result_phase: unquote(result_phase)})
         end
       end
 
