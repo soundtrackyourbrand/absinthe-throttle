@@ -39,9 +39,7 @@ defmodule AbsintheThrottleTest do
   end
 
   test "it passes the query through if workers are available" do
-    pipeline = Schema
-    |> Absinthe.Pipeline.for_document()
-    |> Absinthe.Pipeline.insert_before(Absinthe.Phase.Document.Execution.Resolution, {Unthrottled, result_phase: Absinthe.Phase.Document.Result})
+    pipeline = Unthrottled.pipeline(Schema)
 
     {:ok, %{result: result}, _phases} = """
     {
@@ -56,9 +54,7 @@ defmodule AbsintheThrottleTest do
   end
 
   test "doesn't run the query if it's throttled" do
-    pipeline = Schema
-    |> Absinthe.Pipeline.for_document(a: 2, b: 3)
-    |> Absinthe.Pipeline.insert_before(Absinthe.Phase.Document.Execution.Resolution, {Throttled, result_phase: Absinthe.Phase.Document.Result})
+    pipeline = Throttled.pipeline(Schema)
 
     {:ok, %{result: result}, _phases} = """
     {

@@ -11,17 +11,28 @@ defmodule MyApp.Throttler do
       adapter: AbsintheThrottle.Adapter.Semaphore,
       arguments: [name: :resolve,
                   size: 1,
-                  error: {:error, :custom_error}]
+                  error: {:error, message: :custom_error, code: 123}]
 end
 
 
-defmodule MyApp.Schema do
-  use Absinthe.Schema
-
-  def middleware(middlewares, field, object), do: MyApp.Throttler.middleware(middlewares, field, object)
-
+defmodule MyApp.Router do
+  # ...
+  plug Absinthe.Plug,
+       schema: MyApp.Schema,
+       pipeline: {MyApp.Throttler.Plug, :pipeline}
   # ...
 end
+
+# or
+
+"""
+{
+  document {
+    id
+  }
+}
+"""
+|>  Absinthe.Pipeline.run(MyApp.Throttler.pipeline(MyApp.Schema))
 
 ```
 
