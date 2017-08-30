@@ -16,36 +16,20 @@ defmodule AbsintheThrottleTest do
 
   defmodule Throttled do
     use AbsintheThrottle, adapter: AbsintheThrottle.Adapter.Semaphore, arguments: [name: :resolve,
-                                                                                size: 0,
-                                                                                error: {:error, :custom_error}]
+                                                                                   size: 0,
+                                                                                   error: {:error, message: :error_message, code: 123}]
   end
 
   defmodule Unthrottled do
     use AbsintheThrottle, adapter: AbsintheThrottle.Adapter.Semaphore, arguments: [name: :resolve,
-                                                                                size: 1,
-                                                                                error: {:error, :custom_error}]
+                                                                                   size: 1,
+                                                                                   error: {:error, :custom_error}]
   end
 
   defmodule Schema do
     use Absinthe.Schema
     @post %{title: "A post"}
     import_types Types
-
-    def middleware(middlewares, field, object), do: Unthrottled.middleware(middlewares, field, object)
-
-    query do
-      field :post, :post do
-        resolve fn _, _ -> {:ok, @post} end
-      end
-    end
-  end
-
-  defmodule ThrottledSchema do
-    use Absinthe.Schema
-    @post %{title: "A post"}
-    import_types Types
-
-    def middleware(middlewares, field, object), do: Throttled.middleware(middlewares, field, object)
 
     query do
       field :post, :post do
@@ -55,28 +39,36 @@ defmodule AbsintheThrottleTest do
   end
 
   test "it passes the query through if workers are available" do
-    {:ok, res} = """
+    pipeline = Schema
+    |> Absinthe.Pipeline.for_document()
+    |> Absinthe.Pipeline.insert_before(Absinthe.Phase.Document.Execution.Resolution, {Unthrottled, result_phase: Absinthe.Phase.Document.Result})
+
+    {:ok, %{result: result}, _phases} = """
     {
       post {
         title
       }
     }
     """
-    |> Absinthe.run(Schema)
+    |> Absinthe.Pipeline.run(pipeline)
 
-    assert Map.has_key?(res, :errors) == false
+    assert Map.has_key?(result, :errors) == false
   end
 
   test "doesn't run the query if it's throttled" do
-    {:ok, res} = """
+    pipeline = Schema
+    |> Absinthe.Pipeline.for_document(a: 2, b: 3)
+    |> Absinthe.Pipeline.insert_before(Absinthe.Phase.Document.Execution.Resolution, {Throttled, result_phase: Absinthe.Phase.Document.Result})
+
+    {:ok, %{result: result}, _phases} = """
     {
     post {
     title
     }
     }
     """
-    |> Absinthe.run(ThrottledSchema)
+    |> Absinthe.Pipeline.run(pipeline)
 
-    assert [%{message: "In field \"post\": custom_error"}] = res.errors
+    assert [%{message: "error_message", code: 123}] = result.errors
   end
 end
