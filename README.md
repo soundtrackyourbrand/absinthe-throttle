@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/soundtrackyourbrand/absinthe-throttle.svg?branch=master)](https://travis-ci.org/soundtrackyourbrand/absinthe-throttle)
 
 
-An [Absinthe](https://github.com/absinthe-graphql/absinthe) middleware to throttle the number of top-level queries that are resolved simultaneously.
+An [Absinthe](https://github.com/absinthe-graphql/absinthe) pipeline phase to throttle the number of queries that are resolved simultaneously.
 
 ```elixir
 defmodule MyApp.Throttler do
