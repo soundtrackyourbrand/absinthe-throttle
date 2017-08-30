@@ -2,7 +2,7 @@ defmodule AbsintheThrottle do
   defmacro __using__(opts) do
     adapter = Keyword.fetch!(opts, :adapter)
     arguments = Keyword.get(opts, :arguments, nil)
-    result_phase = Keyword.get(opts, :result_phase, Absinthe.Phase.Document.Result)
+    result_phase = Keyword.get(opts, :result_phase, Absinthe.Phase.Document.Execution.Resolution)
 
     quote location: :keep do
       use Absinthe.Phase
@@ -18,7 +18,7 @@ defmodule AbsintheThrottle do
         def pipeline(config, opts) do
           config
           |> Absinthe.Plug.default_pipeline(opts)
-          |> Absinthe.Pipeline.insert_before(Phase.Document.Execution.Resolution, @parent)
+          |> Absinthe.Pipeline.insert_before(Absinthe.Phase.Document.Execution.Resolution, @parent)
         end
       end
 

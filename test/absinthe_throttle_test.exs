@@ -14,18 +14,6 @@ defmodule AbsintheThrottleTest do
     end
   end
 
-  defmodule Throttled do
-    use AbsintheThrottle, adapter: AbsintheThrottle.Adapter.Semaphore, arguments: [name: :resolve,
-                                                                                   size: 0,
-                                                                                   error: {:error, message: :error_message, code: 123}]
-  end
-
-  defmodule Unthrottled do
-    use AbsintheThrottle, adapter: AbsintheThrottle.Adapter.Semaphore, arguments: [name: :resolve,
-                                                                                   size: 1,
-                                                                                   error: {:error, :custom_error}]
-  end
-
   defmodule Schema do
     use Absinthe.Schema
     @post %{title: "A post"}
@@ -36,6 +24,12 @@ defmodule AbsintheThrottleTest do
         resolve fn _, _ -> {:ok, @post} end
       end
     end
+  end
+
+  defmodule Unthrottled do
+    use AbsintheThrottle, adapter: AbsintheThrottle.Adapter.Semaphore, arguments: [name: :resolve,
+                                                                                   size: 1,
+                                                                                   error: {:error, :custom_error}]
   end
 
   test "it passes the query through if workers are available" do
@@ -51,6 +45,12 @@ defmodule AbsintheThrottleTest do
     |> Absinthe.Pipeline.run(pipeline)
 
     assert Map.has_key?(result, :errors) == false
+  end
+
+  defmodule Throttled do
+    use AbsintheThrottle, adapter: AbsintheThrottle.Adapter.Semaphore, arguments: [name: :resolve,
+                                                                                   size: 0,
+                                                                                   error: {:error, message: :error_message, code: 123}]
   end
 
   test "doesn't run the query if it's throttled" do
