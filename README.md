@@ -48,7 +48,7 @@ by adding `absinthe_throttle` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:absinthe_throttle, "~> 0.1.0"}
+    {:absinthe_throttle, "~> 0.4.0"}
   ]
 end
 ```
