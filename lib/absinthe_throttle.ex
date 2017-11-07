@@ -23,11 +23,7 @@ defmodule AbsintheThrottle do
       end
 
       def run(blueprint, options \\ []) do
-        arguments = case unquote(arguments) do
-          [] -> []
-          x -> [blueprint] ++ [x]
-        end
-
+        arguments = rewrite_args(unquote(arguments), blueprint)
 
         case apply(unquote(adapter), :transaction, arguments) do
           {:ok, input} = res -> res
@@ -49,6 +45,10 @@ defmodule AbsintheThrottle do
         |> Absinthe.Pipeline.for_document()
         |> Absinthe.Pipeline.insert_before(Absinthe.Phase.Document.Execution.Resolution, {__MODULE__, result_phase: unquote(result_phase)})
       end
+
+      defp rewrite_args(nil, blueprint), do: []
+      defp rewrite_args([], blueprint), do: []
+      defp rewrite_args(xs, blueprint), do: [blueprint | [xs]]
 
       defp format_error(reason) do
         case split_error_value(reason) do
